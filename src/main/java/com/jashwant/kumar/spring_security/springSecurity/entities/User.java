@@ -1,7 +1,7 @@
 package com.jashwant.kumar.spring_security.springSecurity.entities;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,8 +9,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -20,6 +24,8 @@ public class User implements UserDetails {
     @Column(unique = true)
     String email;
     String password;
+
+    String name;
 
 
     @Override
