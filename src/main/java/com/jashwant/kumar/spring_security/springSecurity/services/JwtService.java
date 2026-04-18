@@ -6,6 +6,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class JwtService {
             return Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
         }
 
-        public String generateToken(User user)
+        public String generateAccessToken(User user)
         {
             return Jwts.builder()
                     .subject(user.getId().toString())
@@ -37,6 +38,16 @@ public class JwtService {
                     .signWith(getSecretKey())
                     .compact();
         }
+    public String generateRefreshToken(User user)
+    {
+        return Jwts.builder()
+                .subject(user.getId().toString())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis()+1000*60*60))
+                .signWith(getSecretKey())
+                .compact();
+    }
+
 
         public Long getUSerIdFromToken(String token)
         {
@@ -46,7 +57,7 @@ public class JwtService {
                     .parseSignedClaims(token)
                     .getPayload();
 
-            return Long.valueOf(claims.getSubject());
+            return Long.valueOf(claims.getSubject()).describeConstable().orElseThrow(()-> new AuthenticationServiceException("not correct code"));
         }
 
 }
